@@ -1,0 +1,45 @@
+name: 构建包
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'tag name'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 拉取源码
+      - uses: actions/checkout@v4
+
+    - name: 安装依赖程序
+      run: |
+        apt-get install -y upx
+
+    - name: 安装GO
+      - uses: actions/setup-go@v5
+      with:
+        go-version: 1.23.x
+        cache: false
+
+    - name: 构建二进制文件
+      run: |
+        go build -ldflags "-a -w -s" -a -installsuffix cgo -o bin/cloudreve ./main.go
+        upx --best --ultra-brute --overlay=strip ./bin/cloudreve
+        
+    - name: 构建Docker镜像
+      run: |
+        docker login --username=${{ secrets.DOCKER_HUB_USER }} --password=${{ secrets.DOCKER_HUB_PWD }}
+        docker build --no-cache -t jiangjiali/cloudreve:${{ github.event.inputs.tag_name }} .
+        docker push jiangjiali/cloudreve:${{ github.event.inputs.tag_name }}
+        docker save -o cloudreve.${{ github.event.inputs.tag_name }}.tar jiangjiali/cloudreve:${{ github.event.inputs.tag_name }}
+
+    - name: 上载文件
+      uses: actions/upload-artifact@v4
+      with:
+        name: cloudreve
+        path: |
+          cloudreve.${{ github.event.inputs.tag_name }}.tar
