@@ -13,14 +13,14 @@ jobs:
 
     steps:
     - name: 拉取源码
-      - uses: actions/checkout@v4
+      uses: actions/checkout@v4
 
     - name: 安装依赖程序
       run: |
         apt-get install -y upx
 
     - name: 安装GO
-      - uses: actions/setup-go@v5
+      uses: actions/setup-go@v5
       with:
         go-version: 1.23.x
         cache: false
@@ -29,7 +29,7 @@ jobs:
       run: |
         go build -ldflags "-a -w -s" -a -installsuffix cgo -o bin/cloudreve ./main.go
         upx --best --ultra-brute --overlay=strip ./bin/cloudreve
-        
+
     - name: 构建Docker镜像
       run: |
         docker login --username=${{ secrets.DOCKER_HUB_USER }} --password=${{ secrets.DOCKER_HUB_PWD }}
