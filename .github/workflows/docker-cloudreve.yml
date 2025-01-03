@@ -28,6 +28,7 @@ jobs:
 
     - name: 构建二进制文件
       run: |
+        go mod tidy
         go build -ldflags "-a -w -s" -a -installsuffix cgo -o bin/cloudreve ./main.go
         upx --best --ultra-brute --overlay=strip ./bin/cloudreve
 
