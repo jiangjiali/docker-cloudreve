@@ -1,4 +1,4 @@
-FROM amd64/alpine:3.20
+FROM amd64/alpine:3.21
 
 ENV APP_UID=1654 \
     PORTS=5212 \
