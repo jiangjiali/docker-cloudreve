@@ -23,7 +23,7 @@ jobs:
     - name: 安装GO
       uses: actions/setup-go@v5
       with:
-        go-version: 1.23.x
+        go-version: 1.22.x
         cache: false
 
     - name: 构建二进制文件
