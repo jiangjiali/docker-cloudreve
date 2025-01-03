@@ -17,7 +17,8 @@ jobs:
 
     - name: 安装依赖程序
       run: |
-        apt-get install -y upx
+        sudo apt-get update
+        sudo apt-get install -y upx
 
     - name: 安装GO
       uses: actions/setup-go@v5
